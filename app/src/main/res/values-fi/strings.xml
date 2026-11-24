@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Yhteystiedot</string>
+    <string name="app_launcher_name">Rosenweg Yhteystiedot</string>
     <string name="address">Osoite</string>
     <string name="inserting">Sijoitetaan…</string>
     <string name="updating">Päivitetään…</string>

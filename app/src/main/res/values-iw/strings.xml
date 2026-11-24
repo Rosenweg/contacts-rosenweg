@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">אנשי קשר</string>
+    <string name="app_launcher_name">Rosenweg אנשי קשר</string>
     <string name="address">כתובת</string>
     <string name="inserting">מוסיף…</string>
     <string name="updating">מעדכן…</string>

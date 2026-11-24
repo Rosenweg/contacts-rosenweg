@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Kontaktid</string>
+    <string name="app_launcher_name">Rosenweg Kontaktid</string>
     <string name="address">Aadress</string>
     <string name="inserting">Lisame…</string>
     <string name="updating">Uuendame…</string>

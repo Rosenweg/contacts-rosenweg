@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Kontakter</string>
+    <string name="app_launcher_name">Rosenweg Kontakter</string>
     <string name="address">Adress</string>
     <string name="inserting">Lägger till…</string>
     <string name="updating">Uppdaterar…</string>

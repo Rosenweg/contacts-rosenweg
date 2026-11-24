@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Contacte</string>
+    <string name="app_launcher_name">Rosenweg Contacte</string>
     <string name="address">Adresă</string>
     <string name="inserting">Inserare…</string>
     <string name="updating">Actualizare…</string>

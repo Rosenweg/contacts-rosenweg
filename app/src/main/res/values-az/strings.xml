@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Kontaktlar</string>
+    <string name="app_launcher_name">Rosenweg Kontaktlar</string>
     <string name="address">Ünvan</string>
     <string name="inserting">Daxil edilir…</string>
     <string name="updating">Yenilənir…</string>

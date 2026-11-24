@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">جهات الاتصال</string>
+    <string name="app_launcher_name">Rosenweg جهات الاتصال</string>
     <string name="address">العنوان</string>
     <string name="inserting">إضافة…</string>
     <string name="updating">تحديث…</string>

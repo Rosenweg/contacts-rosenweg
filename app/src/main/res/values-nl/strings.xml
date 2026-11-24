@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Contacten</string>
+    <string name="app_launcher_name">Rosenweg Contacten</string>
     <string name="address">Adres</string>
     <string name="inserting">Invoegen…</string>
     <string name="updating">Bijwerken…</string>
