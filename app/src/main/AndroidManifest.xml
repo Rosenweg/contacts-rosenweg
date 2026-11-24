@@ -249,7 +249,7 @@
 
         <provider
             android:name=".contentproviders.MyContactsContentProvider"
-            android:authorities="org.fossify.commons.contactsprovider"
+            android:authorities="ch.rosenweg4303.commons.contactsprovider"
             android:exported="true" />
 
         <activity-alias
