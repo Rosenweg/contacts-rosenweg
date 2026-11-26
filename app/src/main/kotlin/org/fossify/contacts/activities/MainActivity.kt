@@ -64,9 +64,13 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
         )
         storeStateVariables()
         setupTabs()
-        checkContactPermissions()
+        // Rosenweg: ohne Anmeldung (eigenes Handy) die Berechtigungen erst nach dem Anmeldeschirm (onResume)
+        if (ch.rosenweg4303.cloud.RosenwegAnmeldung.anmeldungNoetig(this)) rosenwegStartOffen = true else checkContactPermissions()
         checkWhatsNewDialog()
     }
+
+    /** Rosenweg: Start wartet auf die Anmeldung (eigenes Handy), wird in onResume nachgeholt. */
+    private var rosenwegStartOffen = false
 
     private fun checkContactPermissions() {
         handlePermission(PERMISSION_READ_CONTACTS) {
@@ -95,6 +99,15 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
             finish()
             startActivity(intent)
             return
+        }
+
+        // Rosenweg (Stefan 26.11.2026): auf dem eigenen Handy ist die App ohne Anmeldung nicht nutzbar,
+        // es kommt der gemeinsame Anmeldeschirm (commons-rosenweg: Karte oder Rosenweg-Konto, "Zurueck"
+        // schliesst die App). Geteilte Telefone (Rosenweg Geraet): nie, dort gilt dessen Anmeldung.
+        if (ch.rosenweg4303.cloud.RosenwegAnmeldeSchirm.zeigenFallsNoetig(this)) return
+        if (rosenwegStartOffen) {
+            rosenwegStartOffen = false
+            checkContactPermissions()
         }
 
         val configShowContactThumbnails = config.showContactThumbnails
