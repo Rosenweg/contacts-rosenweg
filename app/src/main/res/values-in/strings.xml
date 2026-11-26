@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Kontak</string>
+    <string name="app_launcher_name">Rosenweg Kontak</string>
     <string name="address">Alamat</string>
     <string name="inserting">Menyimpan…</string>
     <string name="updating">Memperbarui…</string>

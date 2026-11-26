@@ -55,6 +55,8 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         appLaunched(BuildConfig.APPLICATION_ID)
+        // Rosenweg (Regel 7): Einstellungen der angemeldeten Person von der Anlage
+        org.fossify.contacts.helpers.AnlageEinstellungen.abgleichen(this) { recreate() }
         setupOptionsMenu()
         refreshMenuItems()
         setupEdgeToEdge(

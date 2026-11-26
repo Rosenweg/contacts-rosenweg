@@ -2,7 +2,7 @@
 <resources>
     <string name="dialpad">แป้นกด</string>
     <string name="toggle_favorite">สลับรายการโปรด</string>
-    <string name="app_launcher_name">รายชื่อ</string>
+    <string name="app_launcher_name">Rosenweg รายชื่อ</string>
     <string name="address">ที่อยู่</string>
     <string name="street">ถนน</string>
     <string name="neighborhood">เลขที่ห้องหรืออพาร์ตเมนต์</string>

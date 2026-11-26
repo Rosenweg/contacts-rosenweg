@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Επαφές</string>
+    <string name="app_launcher_name">Rosenweg Επαφές</string>
     <string name="address">Διεύθυνση</string>
     <string name="inserting">Εισαγωγή…</string>
     <string name="updating">Ενημέρωση…</string>
