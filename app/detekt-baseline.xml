@@ -6,9 +6,11 @@
     <ID>ComplexCondition:EditContactActivity.kt$EditContactActivity$((contact!!.id == 0 &amp;&amp; action == Intent.ACTION_INSERT) || action == ADD_NEW_CONTACT_NUMBER) &amp;&amp; intent.extras != null</ID>
     <ID>ComplexCondition:EditContactActivity.kt$EditContactActivity$currentContactPhotoPath.isEmpty() &amp;&amp; getFilledPhoneNumbers().isEmpty() &amp;&amp; getFilledEmails().isEmpty() &amp;&amp; getFilledAddresses().isEmpty() &amp;&amp; getFilledIMs().isEmpty() &amp;&amp; getFilledEvents().isEmpty() &amp;&amp; getFilledWebsites().isEmpty()</ID>
     <ID>ComplexCondition:MyViewPagerFragment.kt$MyViewPagerFragment$(config.showTabs and TAB_CONTACTS == 0 &amp;&amp; this is ContactsFragment &amp;&amp; activity !is InsertOrEditContactActivity) || (config.showTabs and TAB_FAVORITES == 0 &amp;&amp; this is FavoritesFragment) || (config.showTabs and TAB_GROUPS == 0 &amp;&amp; this is GroupsFragment)</ID>
+    <ID>CyclomaticComplexMethod:AnlageEinstellungen.kt$AnlageEinstellungen$private fun senden(ctx: Context, prefs: SharedPreferences)</ID>
     <ID>CyclomaticComplexMethod:ContactsAdapter.kt$ContactsAdapter$private fun setupView(view: View, contact: Contact, holder: ViewHolder)</ID>
     <ID>CyclomaticComplexMethod:EditContactActivity.kt$EditContactActivity$private fun gotContact()</ID>
     <ID>CyclomaticComplexMethod:InsertOrEditContactActivity.kt$InsertOrEditContactActivity$override fun refreshContacts(refreshTabsMask: Int)</ID>
+    <ID>CyclomaticComplexMethod:MainActivity.kt$MainActivity$override fun onResume()</ID>
     <ID>CyclomaticComplexMethod:MainActivity.kt$MainActivity$override fun refreshContacts(refreshTabsMask: Int)</ID>
     <ID>CyclomaticComplexMethod:MyViewPagerFragment.kt$MyViewPagerFragment$fun onSearchQueryChanged(text: String)</ID>
     <ID>CyclomaticComplexMethod:MyViewPagerFragment.kt$MyViewPagerFragment$fun refreshContacts(contacts: ArrayList&lt;Contact&gt;, placeholderText: String? = null)</ID>
@@ -25,6 +27,7 @@
     <ID>LargeClass:ViewContactActivity.kt$ViewContactActivity : ContactActivity</ID>
     <ID>LongMethod:VcfExporter.kt$VcfExporter$fun exportContacts( context: Context, outputStream: OutputStream?, contacts: ArrayList&lt;Contact&gt;, showExportingToast: Boolean, version: VCardVersion = VCardVersion.V4_0, callback: (result: ExportResult) -&gt; Unit, )</ID>
     <ID>LongMethod:VcfImporter.kt$VcfImporter$fun importContacts(path: String, targetContactSource: String): ImportResult</ID>
+    <ID>LoopWithTooManyJumpStatements:AnlageEinstellungen.kt$AnlageEinstellungen$for</ID>
     <ID>MagicNumber:AutomaticBackupReceiver.kt$AutomaticBackupReceiver$3000</ID>
     <ID>MagicNumber:Constants.kt$6</ID>
     <ID>MagicNumber:EditContactActivity.kt$EditContactActivity$0.5f</ID>
@@ -116,6 +119,7 @@
     <ID>MaxLineLength:MainActivity.kt$MainActivity$findItem(R.id.column_count).isVisible = currentFragment == findViewById(R.id.favorites_fragment) &amp;&amp; config.viewType == VIEW_TYPE_GRID</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$findViewById&lt;MyViewPagerFragment&lt;*&gt;&gt;(R.id.contacts_fragment)?.startNameWithSurnameChanged(configStartNameWithSurname)</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$findViewById&lt;MyViewPagerFragment&lt;*&gt;&gt;(R.id.favorites_fragment)?.startNameWithSurnameChanged(configStartNameWithSurname)</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$if (ch.rosenweg4303.cloud.RosenwegAnmeldung.anmeldungNoetig(this)) rosenwegStartOffen = true else checkContactPermissions()</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$private fun getInactiveTabIndexes(activeIndex: Int)</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$resources.getColoredDrawableWithColor(org.fossify.commons.R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$val licenses = LICENSE_JODA or LICENSE_GLIDE or LICENSE_GSON or LICENSE_INDICATOR_FAST_SCROLL or LICENSE_AUTOFITTEXTVIEW</ID>
@@ -138,6 +142,10 @@
     <ID>MaxLineLength:MyViewPagerFragment.kt$MyViewPagerFragment$innerBinding.fragmentPlaceholder.text = activity?.getString(org.fossify.commons.R.string.no_contacts_found)</ID>
     <ID>MaxLineLength:MyViewPagerFragment.kt$MyViewPagerFragment$innerBinding.fragmentPlaceholder2.text = activity.getString(org.fossify.commons.R.string.add_favorites)</ID>
     <ID>MaxLineLength:MyViewPagerFragment.kt$MyViewPagerFragment$storedGroups</ID>
+    <ID>MaxLineLength:RosenwegNextcloud.kt$NextcloudKontoDienst.&lt;no name provided&gt;$override fun addAccount(r: AccountAuthenticatorResponse?, t: String?, a: String?, f: Array&lt;out String&gt;?, o: Bundle?): Bundle?</ID>
+    <ID>MaxLineLength:RosenwegNextcloud.kt$NextcloudKontoDienst.&lt;no name provided&gt;$override fun getAuthToken(r: AccountAuthenticatorResponse?, a: Account?, t: String?, o: Bundle?): Bundle?</ID>
+    <ID>MaxLineLength:RosenwegNextcloud.kt$NextcloudKontoDienst.&lt;no name provided&gt;$override fun hasFeatures(r: AccountAuthenticatorResponse?, a: Account?, f: Array&lt;out String&gt;?): Bundle?</ID>
+    <ID>MaxLineLength:RosenwegNextcloud.kt$NextcloudKontoDienst.&lt;no name provided&gt;$override fun updateCredentials(r: AccountAuthenticatorResponse?, a: Account?, t: String?, o: Bundle?): Bundle?</ID>
     <ID>MaxLineLength:SelectContactsAdapter.kt$SelectContactsAdapter$val activity: SimpleActivity</ID>
     <ID>MaxLineLength:SelectContactsAdapter.kt$SelectContactsAdapter.Binding.WithNumber$override</ID>
     <ID>MaxLineLength:SelectContactsAdapter.kt$SelectContactsAdapter.Binding.WithNumber$return ItemAddFavoriteWithNumberBindingAdapter(ItemAddFavoriteWithNumberBinding.inflate(layoutInflater, viewGroup, attachToRoot))</ID>
@@ -153,8 +161,10 @@
     <ID>MaxLineLength:SelectContactsDialog.kt$SelectContactsDialog$val activity: SimpleActivity</ID>
     <ID>MaxLineLength:SelectGroupsDialog.kt$SelectGroupsDialog$class</ID>
     <ID>MaxLineLength:SelectGroupsDialog.kt$SelectGroupsDialog$setColors(activity.getProperTextColor(), activity.getProperPrimaryColor(), activity.getProperBackgroundColor())</ID>
+    <ID>MaxLineLength:SettingsActivity.kt$SettingsActivity$.</ID>
     <ID>MaxLineLength:SettingsActivity.kt$SettingsActivity$VcfExporter.ExportResult.EXPORT_PARTIAL -&gt; org.fossify.commons.R.string.exporting_some_entries_failed</ID>
     <ID>MaxLineLength:SettingsActivity.kt$SettingsActivity$binding.settingsUseEnglishHolder.beVisibleIf((config.wasUseEnglishToggled || Locale.getDefault().language != "en") &amp;&amp; !isTiramisuPlus())</ID>
+    <ID>MaxLineLength:SettingsActivity.kt$SettingsActivity$if (konto == null) getString(R.string.rw_nextcloud_aus) else getString(R.string.rw_nextcloud_an, konto.benutzer)</ID>
     <ID>MaxLineLength:SettingsActivity.kt$SettingsActivity$}</ID>
     <ID>MaxLineLength:ViewContactActivity.kt$ViewContactActivity$.</ID>
     <ID>MaxLineLength:ViewContactActivity.kt$ViewContactActivity$// a contact cannot have different emails per contact source. Such contacts are handled as separate ones, not duplicates of each other</ID>
@@ -192,6 +202,7 @@
     <ID>SwallowedException:ViewContactActivity.kt$ViewContactActivity$e: Exception</ID>
     <ID>SwallowedException:ViewContactActivity.kt$ViewContactActivity$e: SecurityException</ID>
     <ID>TooGenericExceptionCaught:Activity.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:AnlageEinstellungen.kt$AnlageEinstellungen$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ContactActivity.kt$ContactActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ContactsAdapter.kt$ContactsAdapter$e: Exception</ID>
     <ID>TooGenericExceptionCaught:Context.kt$e: Exception</ID>
@@ -200,6 +211,7 @@
     <ID>TooGenericExceptionCaught:InsertOrEditContactActivity.kt$InsertOrEditContactActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:MainActivity.kt$MainActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:MyViewPagerFragment.kt$MyViewPagerFragment$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RosenwegNextcloud.kt$RosenwegNextcloud$e: Exception</ID>
     <ID>TooGenericExceptionCaught:SelectContactsDialog.kt$SelectContactsDialog$e: Exception</ID>
     <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:VcfExporter.kt$VcfExporter$e: Exception</ID>
