@@ -49,6 +49,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Rosenweg: Konto "Rosenweg-Nextcloud" fuer die Kontakte der Nextcloud (CardDAV, ohne DAVx5) -->
+        <service
+            android:name="org.fossify.contacts.rosenweg.NextcloudKontoDienst"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/rosenweg_nextcloud_konto" />
+        </service>
+
+
         <activity
             android:name=".activities.SplashActivity"
             android:exported="false"

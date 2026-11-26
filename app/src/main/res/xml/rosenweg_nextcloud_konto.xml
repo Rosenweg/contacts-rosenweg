@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Konto "Rosenweg-Nextcloud": Kontakte der Rosenweg-Nextcloud (CardDAV, commons-rosenweg
+     KontakteAbgleich). Nur lokal; angemeldet wird in der App. -->
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="ch.rosenweg4303.contacts.nextcloud"
+    android:icon="@mipmap/ic_launcher"
+    android:smallIcon="@mipmap/ic_launcher"
+    android:label="@string/rw_nextcloud" />
