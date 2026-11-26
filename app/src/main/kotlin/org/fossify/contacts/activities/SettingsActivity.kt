@@ -44,6 +44,7 @@ class SettingsActivity : SimpleActivity() {
         setupTopAppBar(binding.settingsAppbar, NavigationIcon.Arrow)
 
         setupCustomizeColors()
+        setupNextcloud()
         setupManageShownContactFields()
         setupManageShownTabs()
         setupFontSize()
@@ -82,6 +83,24 @@ class SettingsActivity : SimpleActivity() {
         binding.settingsColorCustomizationHolder.setOnClickListener {
             startCustomizationActivity()
         }
+    }
+
+    /**
+     * Rosenweg: Adressbuecher der Rosenweg-Nextcloud (CardDAV direkt, commons-rosenweg). Anmelden ueber
+     * die Seite "Rosenweg-Nextcloud" (auf dem eigenen Handy mit dem Anmeldeschirm: Karte oder Konto).
+     */
+    private fun setupNextcloud() {
+        val konto = ch.rosenweg4303.cloud.KontoSpeicher(this).laden()
+        binding.settingsNextcloud.text =
+            if (konto == null) getString(R.string.rw_nextcloud_aus) else getString(R.string.rw_nextcloud_an, konto.benutzer)
+        binding.settingsNextcloudHolder.setOnClickListener {
+            startActivity(
+                android.content.Intent(this, ch.rosenweg4303.cloud.AnmeldenActivity::class.java)
+                    .putExtra(ch.rosenweg4303.cloud.AnmeldenActivity.EXTRA_BESCHREIBUNG, org.fossify.contacts.rosenweg.RosenwegNextcloud.BESCHREIBUNG)
+            )
+        }
+        // zurueck von der Anmeldung (oder Abmeldung): gleich abgleichen
+        org.fossify.contacts.rosenweg.RosenwegNextcloud.abgleichen(this, sofort = true)
     }
 
     private fun setupManageShownContactFields() {

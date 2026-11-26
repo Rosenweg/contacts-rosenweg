@@ -135,6 +135,11 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
             }
         }
 
+        // Rosenweg: Adressbuecher der Rosenweg-Nextcloud abgleichen (hoechstens alle 10 Minuten)
+        org.fossify.contacts.rosenweg.RosenwegNextcloud.abgleichen(this) { geaendert ->
+            if (geaendert && binding.viewPager.adapter != null) refreshContacts(ALL_TABS_MASK)
+        }
+
         val dialpadIcon =
             resources.getColoredDrawableWithColor(org.fossify.commons.R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())
         binding.mainDialpadButton.apply {
