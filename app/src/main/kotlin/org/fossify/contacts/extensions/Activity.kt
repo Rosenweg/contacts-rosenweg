@@ -47,7 +47,10 @@ fun SimpleActivity.startCallIntent(recipient: String) {
 }
 
 fun SimpleActivity.showContactSourcePicker(currentSource: String, callback: (newSource: String) -> Unit) {
-    ContactsHelper(this).getSaveableContactSources { sources ->
+    ContactsHelper(this).getSaveableContactSources { alle ->
+        // Rosenweg: mit Nextcloud nur die Nextcloud als Ziel (kein lokales Telefon-Adressbuch)
+        val nc = org.fossify.contacts.rosenweg.RosenwegNextcloud.standardQuelle(this)
+        val sources = alle.filter { nc == null || it.name == nc || it.name == currentSource }.ifEmpty { alle }
         val items = ArrayList<RadioItem>()
         var sourceNames = sources.map { it.name }
         var currentSourceIndex = sourceNames.indexOfFirst { it == currentSource }

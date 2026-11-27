@@ -1,20 +1,28 @@
 package org.fossify.contacts.rosenweg
 
-import android.app.Activity
-import android.app.Service
 import android.accounts.AbstractAccountAuthenticator
 import android.accounts.Account
 import android.accounts.AccountAuthenticatorResponse
+import android.accounts.AccountManager
+import android.app.Activity
+import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.ContactsContract
 import android.util.Log
+import androidx.work.WorkerParameters
+import ch.rosenweg4303.cloud.Konto
 import ch.rosenweg4303.cloud.KontoSpeicher
+import ch.rosenweg4303.cloud.dav.DavArbeit
+import ch.rosenweg4303.cloud.dav.DavPlaner
 import ch.rosenweg4303.cloud.dav.KontakteAbgleich
 import org.fossify.commons.extensions.hasPermission
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.PERMISSION_WRITE_CONTACTS
 import org.fossify.commons.helpers.ensureBackgroundThread
+import org.fossify.contacts.extensions.config
 
 /**
  * Rosenweg (Stefan 26.11.2026): die Adressbuecher der Rosenweg-Nextcloud direkt per CardDAV, ohne
@@ -22,46 +30,94 @@ import org.fossify.commons.helpers.ensureBackgroundThread
  * auf dem eigenen Handy nach dem Anmeldeschirm (Rosenweg-Karte oder Rosenweg-Konto) ueber die
  * Anlage. Der Abgleich (commons: KontakteAbgleich) legt die Kontakte im Android-Adressbuch unter
  * dem Konto "Rosenweg-Nextcloud" ab; diese App zeigt und bearbeitet sie wie alle Kontakte.
- * Aenderungen gehen beim naechsten Abgleich hoch (beim Oeffnen, hoechstens alle 10 Minuten).
+ *
+ * Wann: im Hintergrund alle 15 Minuten, kurz nach jeder Aenderung (WorkManager, [KontakteArbeit])
+ * und beim Oeffnen (hoechstens alle 2 Minuten).
+ *
+ * Nur Nextcloud (Stefan 27.11.2026): neue Kontakte gehen in die Nextcloud (erstes beschreibbares
+ * Adressbuch), nicht ins lokale Telefon-Adressbuch; zur Wahl beim Speichern steht nur noch die
+ * Nextcloud. Andere Konten - z.B. das Rosenweg-Verzeichnis der geteilten Telefone - bleiben
+ * sichtbar und unberuehrt.
  */
 object RosenwegNextcloud {
     private const val TAG = "RosenwegNextcloud"
     /** Kontotyp, fuer den diese App den Authenticator stellt (res/xml/rosenweg_nextcloud_konto.xml). */
     const val KONTOTYP = "ch.rosenweg4303.contacts.nextcloud"
-    private const val ABSTAND_MS = 10 * 60 * 1000L
-    private const val APP = "Rosenweg Kontakte (Android)"
+    private const val ABSTAND_MS = 2 * 60 * 1000L
+    const val APP = "Rosenweg Kontakte (Android)"
     const val BESCHREIBUNG = "Deine Adressbücher aus der Rosenweg-Nextcloud erscheinen hier. Was du hier " +
-        "einträgst oder änderst, geht zurück in die Nextcloud."
+        "einträgst oder änderst, geht sofort zurück in die Nextcloud – mit Fotos, Gruppen und Geburtstagen."
+
+    val PLAN = DavPlaner.Plan("kontakte", KontakteArbeit::class.java, listOf(ContactsContract.AUTHORITY_URI))
 
     @Volatile private var zuletzt = 0L
-    @Volatile private var laeuft = false
 
-    /** Im Hintergrund abgleichen; [fertig] im UI-Thread (true = etwas geaendert, neu anzeigen). */
+    private fun berechtigt(c: Context) =
+        c.hasPermission(PERMISSION_READ_CONTACTS) && c.hasPermission(PERMISSION_WRITE_CONTACTS)
+
+    /** Gibt es das Nextcloud-Konto? Dann nur noch Nextcloud als Ziel fuer neue Kontakte. */
+    fun aktiv(c: Context) = AccountManager.get(c).getAccountsByType(KONTOTYP).isNotEmpty()
+
+    /** Quelle (Kontoname) fuer neue Kontakte, wenn die Nextcloud da ist; sonst null. */
+    fun standardQuelle(c: Context): String? = if (aktiv(c)) KontakteAbgleich.KONTO_NAME else null
+
+    /** Beim Oeffnen: Hintergrund planen und (hoechstens alle 2 Minuten) gleich abgleichen; [fertig] im UI-Thread. */
     fun abgleichen(a: Activity, sofort: Boolean = false, fertig: (Boolean) -> Unit = {}) {
-        if (laeuft || (!sofort && System.currentTimeMillis() - zuletzt < ABSTAND_MS)) return
-        if (!a.hasPermission(PERMISSION_READ_CONTACTS) || !a.hasPermission(PERMISSION_WRITE_CONTACTS)) return
-        laeuft = true
+        if (!berechtigt(a)) return
+        DavPlaner.einrichten(a, PLAN)
+        if (!sofort && System.currentTimeMillis() - zuletzt < ABSTAND_MS) return
         zuletzt = System.currentTimeMillis()
+        val app = a.applicationContext
         ensureBackgroundThread {
             var geaendert = false
             try {
-                val konto = KontoSpeicher(a).laden()
-                if (konto == null) {
-                    val da = android.accounts.AccountManager.get(a).getAccountsByType(KONTOTYP).isNotEmpty()
-                    if (da) KontakteAbgleich.entfernen(a, KONTOTYP)
-                    geaendert = da
-                } else {
-                    val e = KontakteAbgleich(a, konto, APP, KONTOTYP).abgleichen()
-                    geaendert = e.hoch + e.herunter + e.geloescht > 0
-                }
+                geaendert = DavArbeit.exklusiv(PLAN.name) { abgleichenJetzt(app, KontoSpeicher(app).laden()) }
             } catch (e: Exception) {
                 Log.w(TAG, "Abgleich: ${e.javaClass.simpleName} ${e.message}")
-            } finally {
-                laeuft = false
             }
             a.runOnUiThread { fertig(geaendert) }
         }
     }
+
+    /** Anmeldung am geteilten Telefon u.ae.: im Hintergrund gleich abgleichen. */
+    fun anstossen(c: Context) {
+        if (!berechtigt(c)) return
+        DavPlaner.einrichten(c, PLAN)
+        DavPlaner.sofort(c, PLAN)
+    }
+
+    /** Blockierend (Hintergrund). true = etwas geaendert. */
+    fun abgleichenJetzt(c: Context, konto: Konto?): Boolean {
+        if (konto == null) {
+            val da = aktiv(c)
+            if (da) {
+                KontakteAbgleich.entfernen(c, KONTOTYP)
+                DavPlaner.abschalten(c, PLAN)
+            }
+            return da
+        }
+        val e = KontakteAbgleich(c, konto, APP, KONTOTYP).abgleichen()
+        // neue Kontakte in die Nextcloud statt ins Telefon-Adressbuch
+        if (c.config.lastUsedContactSource != KontakteAbgleich.KONTO_NAME) {
+            c.config.lastUsedContactSource = KontakteAbgleich.KONTO_NAME
+        }
+        return e.hoch + e.herunter + e.geloescht > 0
+    }
+
+    fun wiederherstellen(c: Context, e: ch.rosenweg4303.cloud.dav.AbgleichProtokoll.Eintrag): Boolean {
+        val konto = KontoSpeicher(c).laden() ?: return false
+        return DavArbeit.exklusiv(PLAN.name) { KontakteAbgleich(c, konto, APP, KONTOTYP).wiederherstellen(e) }
+    }
+}
+
+/** Hintergrund-Abgleich (WorkManager, siehe commons DavArbeit). */
+class KontakteArbeit(c: Context, p: WorkerParameters) : DavArbeit(c, p) {
+    override val plan get() = RosenwegNextcloud.PLAN
+    override fun berechtigt() = applicationContext.hasPermission(PERMISSION_READ_CONTACTS) &&
+        applicationContext.hasPermission(PERMISSION_WRITE_CONTACTS)
+    override fun lokalGeaendert() = KontakteAbgleich.lokalGeaendert(applicationContext, RosenwegNextcloud.KONTOTYP)
+    override fun abgleichen(konto: Konto) = RosenwegNextcloud.abgleichenJetzt(applicationContext, konto)
+    override fun abgemeldet() { RosenwegNextcloud.abgleichenJetzt(applicationContext, null) }
 }
 
 /** Authenticator fuer das Konto "Rosenweg-Nextcloud" (nur lokal; anmelden geht ueber die App). */

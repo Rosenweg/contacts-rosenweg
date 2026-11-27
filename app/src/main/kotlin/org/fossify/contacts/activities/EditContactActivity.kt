@@ -898,7 +898,9 @@ class EditContactActivity : ContactActivity() {
     }
 
     private fun setupNewContact() {
-        originalContactSource = if (hasContactPermissions()) config.lastUsedContactSource else SMT_PRIVATE
+        // Rosenweg: neue Kontakte in die Nextcloud (nicht ins Telefon-Adressbuch)
+        originalContactSource = org.fossify.contacts.rosenweg.RosenwegNextcloud.standardQuelle(this)
+            ?: if (hasContactPermissions()) config.lastUsedContactSource else SMT_PRIVATE
         contact = getEmptyContact()
         getPublicContactSource(contact!!.source) {
             binding.contactSource.text = if (it == "") getString(R.string.phone_storage) else it

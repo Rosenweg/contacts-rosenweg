@@ -1,5 +1,7 @@
 package org.fossify.contacts.activities
 
+import org.fossify.commons.extensions.beVisibleIf
+import org.fossify.contacts.rosenweg.RosenwegNextcloud
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -90,17 +92,29 @@ class SettingsActivity : SimpleActivity() {
      * die Seite "Rosenweg-Nextcloud" (auf dem eigenen Handy mit dem Anmeldeschirm: Karte oder Konto).
      */
     private fun setupNextcloud() {
-        val konto = ch.rosenweg4303.cloud.KontoSpeicher(this).laden()
-        binding.settingsNextcloud.text =
-            if (konto == null) getString(R.string.rw_nextcloud_aus) else getString(R.string.rw_nextcloud_an, konto.benutzer)
+        binding.settingsNextcloud.text = ch.rosenweg4303.cloud.CloudStatus.kurz(this)
         binding.settingsNextcloudHolder.setOnClickListener {
             startActivity(
                 android.content.Intent(this, ch.rosenweg4303.cloud.AnmeldenActivity::class.java)
-                    .putExtra(ch.rosenweg4303.cloud.AnmeldenActivity.EXTRA_BESCHREIBUNG, org.fossify.contacts.rosenweg.RosenwegNextcloud.BESCHREIBUNG)
+                    .putExtra(ch.rosenweg4303.cloud.AnmeldenActivity.EXTRA_BESCHREIBUNG, RosenwegNextcloud.BESCHREIBUNG)
             )
         }
+        val art = ch.rosenweg4303.cloud.dav.NextcloudDav.Art.ADRESSEN
+        val protokoll = ch.rosenweg4303.cloud.dav.AbgleichProtokoll(this, art)
+        val anzahl = protokoll.liste().size
+        val verbunden = ch.rosenweg4303.cloud.KontoSpeicher(this).laden() != null
+        binding.settingsNextcloudProtokollHolder.beVisibleIf(verbunden || anzahl > 0)
+        binding.settingsNextcloudProtokoll.text =
+            if (anzahl == 0) "Keine Konflikte" else "$anzahl Meldung(en), davon ${protokoll.konflikte()} Konflikt(e)"
+        binding.settingsNextcloudProtokollHolder.setOnClickListener {
+            ch.rosenweg4303.cloud.dav.ProtokollAnsicht.zeigen(this, art, { e ->
+                RosenwegNextcloud.wiederherstellen(applicationContext, e)
+            }) { setupNextcloud() }
+        }
         // zurueck von der Anmeldung (oder Abmeldung): gleich abgleichen
-        org.fossify.contacts.rosenweg.RosenwegNextcloud.abgleichen(this, sofort = true)
+        RosenwegNextcloud.abgleichen(this, sofort = true) {
+            binding.settingsNextcloud.text = ch.rosenweg4303.cloud.CloudStatus.kurz(this)
+        }
     }
 
     private fun setupManageShownContactFields() {

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="rw_nextcloud">Rosenweg-Nextcloud</string>
-    <string name="rw_nextcloud_aus">Nicht angemeldet – zum Anmelden tippen (Rosenweg-Karte oder Rosenweg-Konto)</string>
-    <string name="rw_nextcloud_an">%s – deine Adressbücher der Nextcloud werden abgeglichen</string>
+    <string name="rw_protokoll">Abgleich-Protokoll</string>
 </resources>
