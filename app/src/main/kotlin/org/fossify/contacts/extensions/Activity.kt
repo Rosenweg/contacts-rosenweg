@@ -50,7 +50,7 @@ fun SimpleActivity.showContactSourcePicker(currentSource: String, callback: (new
     ContactsHelper(this).getSaveableContactSources { alle ->
         // Rosenweg: mit Nextcloud nur die Nextcloud als Ziel (kein lokales Telefon-Adressbuch)
         val nc = org.fossify.contacts.rosenweg.RosenwegNextcloud.standardQuelle(this)
-        val sources = alle.filter { nc == null || it.name == nc || it.name == currentSource }.ifEmpty { alle }
+        val sources = if (nc == null) alle else alle.filter { it.name == nc }
         val items = ArrayList<RadioItem>()
         var sourceNames = sources.map { it.name }
         var currentSourceIndex = sourceNames.indexOfFirst { it == currentSource }

@@ -62,7 +62,9 @@ object AnlageEinstellungen {
     private fun stand(ctx: Context) = ctx.getSharedPreferences(STAND, Context.MODE_PRIVATE)
 
     /** null: keine Geraete-App, keine Anmeldung oder Fehler */
-    private fun rufen(ctx: Context, methode: String, extras: Bundle?): Bundle? = try {
+    // privates Handy: keine Geraete-App, gar nicht erst fragen
+    private fun rufen(ctx: Context, methode: String, extras: Bundle?): Bundle? =
+        if (!ch.rosenweg4303.cloud.RosenwegAnmeldung.geraetDa(ctx)) null else try {
         ctx.contentResolver.call(ANLAGE, methode, ctx.packageName, extras)
             ?.takeIf { !it.containsKey("fehler") && !it.isEmpty }
     } catch (e: Exception) { // SecurityException / IllegalArgumentException ohne Geraete-App

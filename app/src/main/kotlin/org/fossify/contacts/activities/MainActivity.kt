@@ -89,6 +89,8 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
 
     override fun onResume() {
         super.onResume()
+        // Rosenweg: nur Nextcloud-Kontakte zeigen (andere Konten ausblenden)
+        org.fossify.contacts.rosenweg.RosenwegNextcloud.quellenFestlegen(this)
         if (storedShowPhoneNumbers != config.showPhoneNumbers) {
             System.exit(0)
             return
@@ -191,7 +193,8 @@ class MainActivity : SimpleActivity(), RefreshContactsListener {
         val currentFragment = getCurrentFragment()
         binding.mainMenu.requireToolbar().menu.apply {
             findItem(R.id.sort).isVisible = currentFragment != findViewById(R.id.groups_fragment)
-            findItem(R.id.filter).isVisible = currentFragment != findViewById(R.id.groups_fragment)
+            // Rosenweg: nur Nextcloud-Kontakte, kein Quellen-Filter
+            findItem(R.id.filter).isVisible = false
             findItem(R.id.dialpad).isVisible = !config.showDialpadButton
             findItem(R.id.change_view_type).isVisible = currentFragment == findViewById(R.id.favorites_fragment)
             findItem(R.id.column_count).isVisible = currentFragment == findViewById(R.id.favorites_fragment) && config.viewType == VIEW_TYPE_GRID

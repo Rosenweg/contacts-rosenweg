@@ -85,6 +85,9 @@ class InsertOrEditContactActivity : SimpleActivity(), RefreshContactsListener {
 
     override fun onResume() {
         super.onResume()
+        // Rosenweg: nur Nextcloud-Kontakte, kein Quellen-Filter
+        org.fossify.contacts.rosenweg.RosenwegNextcloud.quellenFestlegen(this)
+        binding.insertEditMenu.requireToolbar().menu.findItem(R.id.filter)?.isVisible = false
         updateMenuColors()
         setupTabColors()
     }
