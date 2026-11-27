@@ -65,7 +65,8 @@ object RosenwegNextcloud {
     fun abgleichen(a: Activity, sofort: Boolean = false, fertig: (Boolean) -> Unit = {}) {
         if (!berechtigt(a)) return
         DavPlaner.einrichten(a, PLAN)
-        if (!sofort && System.currentTimeMillis() - zuletzt < ABSTAND_MS) return
+        // noch kein Nextcloud-Konto im Adressbuch (gleich nach der Anmeldung): immer sofort
+        if (!sofort && aktiv(a) && System.currentTimeMillis() - zuletzt < ABSTAND_MS) return
         zuletzt = System.currentTimeMillis()
         val app = a.applicationContext
         ensureBackgroundThread {
