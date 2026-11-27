@@ -42,6 +42,7 @@ import org.fossify.contacts.extensions.config
  * Nextcloud. Andere Konten - z.B. das Rosenweg-Verzeichnis der geteilten Telefone - bleiben
  * sichtbar und unberuehrt.
  */
+@Suppress("TooManyFunctions")
 object RosenwegNextcloud {
     private const val TAG = "RosenwegNextcloud"
     /** Kontotyp, fuer den diese App den Authenticator stellt (res/xml/rosenweg_nextcloud_konto.xml). */
@@ -74,6 +75,66 @@ object RosenwegNextcloud {
         if (c.baseConfig.ignoredContactSources == ignoriert) return false
         c.baseConfig.ignoredContactSources = ignoriert
         return true
+    }
+
+    /**
+     * Privates Handy (ohne Rosenweg Geraet; Stefan 27.11.2026: "nix Lokales auf privaten
+     * Smartphones"). Dort ohne Nextcloud-Verbindung weder lokale Kontakte noch neue lokale Kontakte,
+     * sondern ein Hinweis mit "Mit der Nextcloud verbinden". Geteilte Telefone bleiben, wie sie sind.
+     */
+    fun privat(c: Context) = !ch.rosenweg4303.cloud.RosenwegAnmeldung.geraetDa(c)
+
+    /** Privat ohne Nextcloud-Konto: kein lokaler Speicherort fuer neue Kontakte. */
+    fun ohneZiel(c: Context) = privat(c) && !aktiv(c)
+
+    const val HINWEIS_NEU = "Neue Kontakte speichert Rosenweg Kontakte in deiner Rosenweg-Nextcloud. " +
+        "Verbinde dich zuerst mit der Nextcloud."
+
+    /** Seite "Rosenweg-Nextcloud" (Anmelden/Verbindung), wie in den Einstellungen. */
+    fun verbinden(a: Activity) {
+        a.startActivity(
+            Intent(a, ch.rosenweg4303.cloud.AnmeldenActivity::class.java)
+                .putExtra(ch.rosenweg4303.cloud.AnmeldenActivity.EXTRA_BESCHREIBUNG, BESCHREIBUNG)
+        )
+    }
+
+    const val HINWEIS_FREMD = "Dieser Kontakt liegt im Telefonbuch des Handys, nicht in deiner Rosenweg-Nextcloud. " +
+        "Rosenweg Kontakte zeigt auf diesem Handy nur Nextcloud-Kontakte."
+
+    /**
+     * Privates Handy: Kontakt aus einer anderen Quelle (Google, Samsung, SIM, Telefonspeicher), z.B.
+     * von einer anderen App zum Ansehen/Bearbeiten geschickt? Dann nicht zeigen (aber nie loeschen).
+     */
+    fun fremd(c: Context, contact: org.fossify.commons.models.contacts.Contact) =
+        privat(c) && contact.source != KontakteAbgleich.KONTO_NAME && !mitNextcloud(c, contact.contactId)
+
+    /** Gehoert zum (zusammengefassten) Android-Kontakt auch ein Roh-Kontakt der Nextcloud? */
+    private fun mitNextcloud(c: Context, contactId: Int): Boolean {
+        val r = ContactsContract.RawContacts.CONTENT_URI
+        val wo = "${ContactsContract.RawContacts.CONTACT_ID}=? AND " +
+            "${ContactsContract.RawContacts.ACCOUNT_TYPE}=? AND ${ContactsContract.RawContacts.DELETED}=0"
+        val spalten = arrayOf(ContactsContract.RawContacts._ID)
+        return try {
+            c.contentResolver.query(r, spalten, wo, arrayOf("$contactId", KONTOTYP), null)?.use { it.count > 0 } == true
+        } catch (e: SecurityException) {
+            Log.w(TAG, "mitNextcloud: ${e.javaClass.simpleName}")
+            false
+        }
+    }
+
+    /** Leere Kontaktliste auf dem privaten Handy erklaeren; null = Fossify-Standard (geteiltes Telefon). */
+    fun leerText(c: Context): Pair<String, String>? = when {
+        !privat(c) -> null
+        !aktiv(c) -> Pair(
+            "Hier erscheinen deine Adressbücher aus der Rosenweg-Nextcloud. Das Telefonbuch des Handys " +
+                "(Google, Samsung, SIM) zeigt Rosenweg Kontakte nicht an. Die Verbindung zur Nextcloud fehlt noch.",
+            "Mit der Nextcloud verbinden"
+        )
+        else -> Pair(
+            "Deine Adressbücher in der Rosenweg-Nextcloud sind noch leer. Das Telefonbuch des Handys " +
+                "(Google, Samsung, SIM) zeigt Rosenweg Kontakte nicht an.",
+            "Neuer Kontakt"
+        )
     }
 
     /** Nur die Gruppen der Nextcloud (CATEGORIES) - keine Gruppen anderer Konten oder lokale. */

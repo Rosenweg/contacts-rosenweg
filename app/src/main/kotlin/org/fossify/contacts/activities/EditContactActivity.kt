@@ -252,6 +252,19 @@ class EditContactActivity : ContactActivity() {
     }
 
     private fun gotContact() {
+        // Rosenweg: privates Handy ohne Nextcloud - neuen Kontakt nicht lokal speichern, erst verbinden
+        if (contact == null && org.fossify.contacts.rosenweg.RosenwegNextcloud.ohneZiel(this)) {
+            toast(org.fossify.contacts.rosenweg.RosenwegNextcloud.HINWEIS_NEU, android.widget.Toast.LENGTH_LONG)
+            org.fossify.contacts.rosenweg.RosenwegNextcloud.verbinden(this)
+            finish()
+            return
+        }
+        // Rosenweg: privates Handy - Kontakte aus dem Telefonbuch des Handys nicht zeigen/bearbeiten
+        if (contact != null && org.fossify.contacts.rosenweg.RosenwegNextcloud.fremd(this, contact!!)) {
+            toast(org.fossify.contacts.rosenweg.RosenwegNextcloud.HINWEIS_FREMD, android.widget.Toast.LENGTH_LONG)
+            finish()
+            return
+        }
         binding.contactScrollview.beVisible()
         if (contact == null) {
             setupNewContact()

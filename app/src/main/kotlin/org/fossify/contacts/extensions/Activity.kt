@@ -210,5 +210,11 @@ fun SimpleActivity.tryImportContactsFromFile(uri: Uri, callback: (Boolean) -> Un
 }
 
 fun SimpleActivity.showImportContactsDialog(path: String, callback: (Boolean) -> Unit) {
+    // Rosenweg: privates Handy ohne Nextcloud - nicht ins Telefon-Adressbuch importieren
+    if (org.fossify.contacts.rosenweg.RosenwegNextcloud.ohneZiel(this)) {
+        toast(org.fossify.contacts.rosenweg.RosenwegNextcloud.HINWEIS_NEU, android.widget.Toast.LENGTH_LONG)
+        org.fossify.contacts.rosenweg.RosenwegNextcloud.verbinden(this)
+        return
+    }
     ImportContactsDialog(this, path, callback)
 }
