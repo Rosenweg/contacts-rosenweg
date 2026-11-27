@@ -222,8 +222,12 @@ class ContactsAdapter(
         val positions = getSelectedItemPositions()
         contactItems.removeAll(contactsToRemove)
 
-        ContactsHelper(activity).getContacts(true) { allContacts ->
+        ContactsHelper(activity).getContacts(true) { alleQuellen ->
             ensureBackgroundThread {
+                // Rosenweg: "Doppelte zusammenfassen" darf beim Loeschen keine ausgeblendeten Kontakte
+                // (Telefonbuch des Handys, Google, SIM ...) mitloeschen - nur sichtbare Quellen
+                val sichtbar = activity.getVisibleContactSources()
+                val allContacts = alleQuellen.filter { sichtbar.contains(it.source) }
                 ContactsHelper(activity).deleteContacts(contactsToRemove
                     .flatMap { contactToRemove -> allContacts.filter {
                         (config.mergeDuplicateContacts || it.id == contactToRemove.id) && (it.getHashToCompare() == contactToRemove.getHashToCompare())

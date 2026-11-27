@@ -193,6 +193,12 @@ class ViewContactActivity : ContactActivity() {
             return
         }
 
+        // Rosenweg: privates Handy - nur Nextcloud-Kontakte zeigen
+        if (org.fossify.contacts.rosenweg.RosenwegNextcloud.fremd(this, contact!!)) {
+            toast(org.fossify.contacts.rosenweg.RosenwegNextcloud.HINWEIS_FREMD, android.widget.Toast.LENGTH_LONG)
+            finish()
+            return
+        }
         binding.contactScrollview.beVisible()
         setupViewContact()
         binding.contactSendSms.beVisibleIf(contact!!.phoneNumbers.isNotEmpty())

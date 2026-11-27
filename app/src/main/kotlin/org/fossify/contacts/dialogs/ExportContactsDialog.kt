@@ -109,8 +109,16 @@ class ExportContactsDialog(
         contactSources.clear()
         contactSources.addAll(contactSourcesWithCount)
 
+        // Rosenweg: privates Handy - nur die Nextcloud zur Wahl; die anderen Quellen gelten als
+        // abgewaehlt (sie fehlen in getSelectedContactSources und landen so in ignoredSources)
+        val sichtbar = activity.getVisibleContactSources()
+        val angezeigt = if (org.fossify.contacts.rosenweg.RosenwegNextcloud.privat(activity)) {
+            ArrayList(contactSourcesWithCount.filter { sichtbar.contains(it.name) })
+        } else {
+            contactSourcesWithCount
+        }
         activity.runOnUiThread {
-            binding.exportContactsList.adapter = FilterContactSourcesAdapter(activity, contactSourcesWithCount, activity.getVisibleContactSources())
+            binding.exportContactsList.adapter = FilterContactSourcesAdapter(activity, angezeigt, sichtbar)
         }
     }
 }
