@@ -143,7 +143,7 @@ dependencies {
     // Rosenweg Updater (ohne Geraet: alle Rosenweg-Apps aus dem Katalog der Anlage aktuell halten)
     implementation("ch.rosenweg4303:updater:0.1.3")
     // Rosenweg-Nextcloud: Zugang (KontoSpeicher, Anmeldeschirm) und CardDAV-Abgleich (dav/KontakteAbgleich)
-    implementation("ch.rosenweg4303:cloud:0.13.2")
+    implementation("ch.rosenweg4303:cloud:0.13.3")
     // Hintergrund-Abgleich (KontakteArbeit, commons DavArbeit)
     implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation(libs.fossify.commons)
