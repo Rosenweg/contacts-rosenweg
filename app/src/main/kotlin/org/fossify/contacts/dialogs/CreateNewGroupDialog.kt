@@ -32,7 +32,10 @@ class CreateNewGroupDialog(val activity: BaseSimpleActivity, val callback: (newG
 
                         val contactSources = ArrayList<ContactSource>()
                         ContactsHelper(activity).getContactSources {
-                            it.mapTo(contactSources) { ContactSource(it.name, it.type, it.publicName) }
+                            // Rosenweg: Gruppen nur in der Nextcloud (ohne Wahl, sobald das Konto da ist)
+                            val typ = org.fossify.contacts.rosenweg.RosenwegNextcloud.KONTOTYP
+                            val nc = it.filter { q -> q.type == typ }
+                            (nc.ifEmpty { it }).mapTo(contactSources) { ContactSource(it.name, it.type, it.publicName) }
 
                             val items = ArrayList<RadioItem>()
                             contactSources.forEachIndexed { index, contactSource ->

@@ -19,7 +19,7 @@ class SelectGroupsDialog(val activity: SimpleActivity, val selectedGroups: Array
 
     init {
         ContactsHelper(activity).getStoredGroups {
-            groups = it
+            groups = org.fossify.contacts.rosenweg.RosenwegNextcloud.gruppen(activity, it)
             activity.runOnUiThread {
                 initDialog()
             }

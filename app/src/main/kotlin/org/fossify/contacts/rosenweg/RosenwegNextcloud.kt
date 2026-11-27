@@ -22,6 +22,9 @@ import org.fossify.commons.extensions.hasPermission
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.PERMISSION_WRITE_CONTACTS
 import org.fossify.commons.helpers.ensureBackgroundThread
+import org.fossify.commons.extensions.baseConfig
+import org.fossify.commons.extensions.getAllContactSources
+import org.fossify.commons.models.contacts.Group
 import org.fossify.contacts.extensions.config
 
 /**
@@ -57,6 +60,30 @@ object RosenwegNextcloud {
 
     /** Gibt es das Nextcloud-Konto? Dann nur noch Nextcloud als Ziel fuer neue Kontakte. */
     fun aktiv(c: Context) = AccountManager.get(c).getAccountsByType(KONTOTYP).isNotEmpty()
+
+    /**
+     * Stefan 27.11.2026: Die App zeigt NUR Kontakte aus der Nextcloud. Alle anderen Quellen auf dem
+     * Telefon (Telefon/lokal, Google, SIM, WhatsApp, Rosenweg-Verzeichnis von Geraet ...) kommen in
+     * Fossifys "ignorierte Quellen" - damit sind sie weg aus Liste, Favoriten, Suche und Export.
+     * Andere Apps (z.B. Rosenweg Telefon) sind davon nicht betroffen. Bei jedem Oeffnen und nach dem
+     * Abgleich neu setzen (neue Konten kommen dazu). true = geaendert.
+     */
+    fun quellenFestlegen(c: Context): Boolean {
+        val ignoriert = c.getAllContactSources().filter { it.type != KONTOTYP }.map { it.getFullIdentifier() }
+            .filter { it.isNotEmpty() }.toHashSet()
+        if (c.baseConfig.ignoredContactSources == ignoriert) return false
+        c.baseConfig.ignoredContactSources = ignoriert
+        return true
+    }
+
+    /** Nur die Gruppen der Nextcloud (CATEGORIES) - keine Gruppen anderer Konten oder lokale. */
+    fun gruppen(c: Context, alle: ArrayList<Group>): ArrayList<Group> {
+        val g = ContactsContract.Groups.CONTENT_URI
+        val wo = "${ContactsContract.Groups.ACCOUNT_TYPE}=? AND ${ContactsContract.Groups.DELETED}=0"
+        val unsere = c.contentResolver.query(g, arrayOf(ContactsContract.Groups._ID), wo, arrayOf(KONTOTYP), null)
+            ?.use { cur -> generateSequence { if (cur.moveToNext()) cur.getLong(0) else null }.toSet() } ?: emptySet()
+        return ArrayList(alle.filter { it.id in unsere })
+    }
 
     /** Quelle (Kontoname) fuer neue Kontakte, wenn die Nextcloud da ist; sonst null. */
     fun standardQuelle(c: Context): String? = if (aktiv(c)) KontakteAbgleich.KONTO_NAME else null
@@ -98,6 +125,7 @@ object RosenwegNextcloud {
             return da
         }
         val e = KontakteAbgleich(c, konto, APP, KONTOTYP).abgleichen()
+        quellenFestlegen(c)
         // neue Kontakte in die Nextcloud statt ins Telefon-Adressbuch
         if (c.config.lastUsedContactSource != KontakteAbgleich.KONTO_NAME) {
             c.config.lastUsedContactSource = KontakteAbgleich.KONTO_NAME

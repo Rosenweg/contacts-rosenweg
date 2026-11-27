@@ -271,8 +271,8 @@ class ContactsAdapter(
 
     private fun addToGroup() {
         val items = ArrayList<RadioItem>()
-        ContactsHelper(activity).getStoredGroups {
-            it.forEach {
+        ContactsHelper(activity).getStoredGroups { alle ->
+            org.fossify.contacts.rosenweg.RosenwegNextcloud.gruppen(activity, alle).forEach {
                 items.add(RadioItem(it.id!!.toInt(), it.title))
             }
             items.add(RadioItem(NEW_GROUP_ID, activity.getString(R.string.create_new_group)))

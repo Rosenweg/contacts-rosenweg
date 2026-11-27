@@ -207,7 +207,7 @@ abstract class MyViewPagerFragment<Binding : MyViewPagerFragment.InnerBinding>(c
 
     private fun setupGroupsAdapter(contacts: List<Contact>, callback: () -> Unit) {
         ContactsHelper(activity!!).getStoredGroups {
-            var storedGroups = it
+            var storedGroups = org.fossify.contacts.rosenweg.RosenwegNextcloud.gruppen(activity!!, it)
             contacts.forEach {
                 it.groups.forEach {
                     val group = it
