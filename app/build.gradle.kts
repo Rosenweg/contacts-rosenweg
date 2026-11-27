@@ -141,7 +141,7 @@ detekt {
 
 dependencies {
     // Rosenweg Updater (ohne Geraet: alle Rosenweg-Apps aus dem Katalog der Anlage aktuell halten)
-    implementation("ch.rosenweg4303:updater:0.1.3")
+    implementation("ch.rosenweg4303:updater:0.1.4")
     // Rosenweg-Nextcloud: Zugang (KontoSpeicher, Anmeldeschirm) und CardDAV-Abgleich (dav/KontakteAbgleich)
     implementation("ch.rosenweg4303:cloud:0.13.4")
     // Hintergrund-Abgleich (KontakteArbeit, commons DavArbeit)
