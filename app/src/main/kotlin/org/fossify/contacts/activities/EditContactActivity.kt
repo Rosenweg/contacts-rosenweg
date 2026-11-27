@@ -69,6 +69,7 @@ import org.fossify.commons.helpers.DEFAULT_EVENT_TYPE
 import org.fossify.commons.helpers.DEFAULT_IM_TYPE
 import org.fossify.commons.helpers.DEFAULT_PHONE_NUMBER_TYPE
 import org.fossify.commons.helpers.IS_PRIVATE
+import org.fossify.commons.helpers.PERMISSION_CAMERA
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.PERMISSION_WRITE_CONTACTS
 import org.fossify.commons.helpers.PHOTO_ADDED
@@ -1655,7 +1656,16 @@ class EditContactActivity : ContactActivity() {
         contact!!.notes = note
     }
 
+    // Rosenweg: commons-rosenweg cloud (ab 0.12.0) bringt CAMERA ins Manifest ("QR-Code scannen" im
+    // Anmeldeschirm). Ist das Recht deklariert, aber nicht erteilt, lehnt Android
+    // ACTION_IMAGE_CAPTURE mit einer SecurityException ab - also vorher fragen.
     private fun startTakePhotoIntent() {
+        handlePermission(PERMISSION_CAMERA) { erteilt ->
+            if (erteilt) fotoAufnehmen() else toast(org.fossify.commons.R.string.no_camera_permissions)
+        }
+    }
+
+    private fun fotoAufnehmen() {
         hideKeyboard()
         val uri = getCachePhotoUri()
         lastPhotoIntentUri = uri
